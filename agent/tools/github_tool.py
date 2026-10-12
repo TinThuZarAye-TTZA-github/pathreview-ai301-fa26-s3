@@ -118,17 +118,20 @@ class GitHubTool(BaseTool):
         if self.api_token:
             headers["Authorization"] = f"token {self.api_token}"
 
-        response = httpx.get(
-            url,
-            headers=headers,
-            params={"recursive": "1"},
-            timeout=10.0,
-        )
-        response.raise_for_status()
+        try:
+            response = httpx.get(
+                url,
+                headers=headers,
+                params={"recursive": "1"},
+                timeout=10.0,
+            )
+            response.raise_for_status()
 
-        tree_json = response.json()
+            tree_json = response.json()
 
-        return [item["path"] for item in tree_json.get("tree", []) if item.get("path")]
+            return [item["path"] for item in tree_json.get("tree", []) if item.get("path")]
+        except Exception:
+            return []
 
     def _has_readme(self, username: str, repo_name: str) -> bool:
         """Check if repository has a README file.

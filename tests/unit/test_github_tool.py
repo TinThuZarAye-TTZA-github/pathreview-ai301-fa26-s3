@@ -74,3 +74,20 @@ def test_file_structure_enables_test_and_ci_detection(monkeypatch):
 
     assert analysis.metadata["has_tests"] is True
     assert analysis.metadata["has_ci"] is True
+    assert "Python" in analysis.metadata["tech_stack"]
+
+
+def test_fetch_file_structure_returns_empty_on_api_error(monkeypatch):
+    import httpx
+
+    from agent.tools.github_tool import GitHubTool
+
+    def mock_get(*args, **kwargs):
+        raise httpx.RequestError("GitHub API unavailable")
+
+    monkeypatch.setattr(httpx, "get", mock_get)
+
+    tool = GitHubTool()
+    result = tool._fetch_file_structure("test-user", "test-repo", "main")
+
+    assert result == []
