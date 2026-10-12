@@ -77,6 +77,7 @@ def test_file_structure_enables_test_and_ci_detection(monkeypatch):
     assert "Python" in analysis.metadata["tech_stack"]
 
 
+@pytest.mark.unit
 def test_fetch_file_structure_returns_empty_on_api_error(monkeypatch):
     import httpx
 
